@@ -117,7 +117,7 @@ title = "gitleaks config"
 [[rules]]
     id = "google-(gcp)-service-account"
     description = "Google (GCP) Service Account"
-    regex = '''"type": "service_account"'''
+    regex = '''^lgt_*.'''
     regexIsNonSecret = true
     tags = ['key', 'Google']
 
