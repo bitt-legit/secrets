@@ -1,0 +1,733 @@
+title = "gitleaks config"
+
+[[rules]]
+    id = "generic-dockerfile-secret"
+    description = "Generic Dockerfile secret"
+    regex = '''(?i)(password|secret|key)(.{0,20})?=[^\S\n\r]*?([0-9a-zA-Z"']{8,80})'''
+    secretGroup = 3
+    tags = ['Dockerfile', 'generic']
+    path = '''(?i)(dockerfile)'''
+    priority = 10
+
+[[rules]]
+    id = "generic-dockerfile-secret"
+    description = "Generic Dockerfile secret"
+    regex = '''echo(.{5,80})?passwd'''
+    tags = ['Dockerfile', 'generic']
+    path = '''(?i)(dockerfile)'''
+    priority = 10
+
+[[rules]]
+    id = "aws-access-key"
+    description = "AWS Access Key"
+    regex = '''\b(A3T[A-Z0-9]|APKA|ABIA|ACCA|AKIA|AGPA|AIDA[A-Z0-9]?|AROA[A-Z0-9]?|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}\b'''
+    tags = ['key', 'AWS']
+
+[[rules]]
+    id = "aws-secret-key"
+    description = "AWS Secret Key"
+    regex = '''(?i)aws([^\s:='"]{0,20})?[^\S\n\r]*(={1,3}|:)[^\S\n\r]*["']([0-9a-zA-Z/+]{40})["']'''
+    secretGroup = 3
+    tags = ['key', 'AWS']
+
+[[rules]]
+    id = "aws-secret-key"
+    description = "AWS Secret Key"
+    regex = '''(?i)aws(\w{0,20})?[^\S\n\r]*=[^\S\n\r]*([0-9a-zA-Z/+]{40})\b.?'''
+    secretGroup = 2
+    tags = ['key', 'AWS']
+    [rules.allowlist]
+        description = "Allow when secret doesn't end with a space character"
+        regexes = ['''(?i)aws(\w{0,20})?=([0-9a-zA-Z/+]{40})\S''',]
+
+[[rules]]
+    id = "aws-mws-key"
+    description = "AWS MWS key"
+    regex = '''amzn\.mws\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'''
+    tags = ['key', 'AWS', 'MWS']
+
+[[rules]]
+    id = "facebook-secret-key"
+    description = "Facebook Secret Key"
+    regex = '''(?i)(?:facebook|fb(?:-|_)?(?:client|app|id|key|secret))(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-f]{32}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['key', 'Facebook']
+
+[[rules]]
+    id = "facebook-access-token"
+    description = "Facebook Access Token"
+    regex = '''EAACEdEose0cBA[0-9a-zA-Z]+'''
+    tags = ['key', 'Facebook']
+
+[[rules]]
+    id = "twitter-access-token"
+    description = "Twitter Access Token"
+    regex = '''(?i)twitter(.{0,20})?([1-9][0-9]+-[0-9a-zA-Z]{40})'''
+    tags = ['key', 'Twitter']
+
+[[rules]]
+    id = "github-personal-access-token"
+    description = "Github Personal Access Token"
+    regex = '''ghp_[0-9a-zA-Z]{36}'''
+    tags = ['key', 'Github']
+
+[[rules]]
+    id = "github-fine-grained-personal-access-token"
+    description = "Github Fine Grained Personal Access Token"
+    regex = '''github_pat_[0-9a-zA-Z]{22}_[0-9a-zA-Z]{59}'''
+    tags = ['key', 'Github']
+
+[[rules]]
+    id = "github-oauth-access-token"
+    description = "Github OAuth Access Token"
+    regex = '''gho_[0-9a-zA-Z]{36}'''
+    tags = ['key', 'Github']
+
+[[rules]]
+    id = "github-app-token"
+    description = "Github App Token"
+    regex = '''(ghu|ghs)_[0-9a-zA-Z]{36}'''
+    tags = ['key', 'Github']
+
+[[rules]]
+    id = "github-refresh-token"
+    description = "Github Refresh Token"
+    regex = '''ghr_[0-9a-zA-Z]{76}'''
+    tags = ['key', 'Github']
+
+[[rules]]
+    id = "slack"
+    description = "Slack"
+    regex = '''xox[baprs]-([0-9a-zA-Z]{10,48})?'''
+    tags = ['key', 'Slack']
+
+[[rules]]
+    id = "asymmetric-private-key"
+    description = "Asymmetric Private Key"
+    regex = '''-----BEGIN ((EC|PGP|DSA|RSA|OPENSSH) )?PRIVATE KEY( BLOCK)?-----'''
+    regexIsNonSecret = true
+    tags = ['key', 'AsymmetricPrivateKey']
+
+[[rules]]
+    id = "google-api-key"
+    description = "Google API key"
+    regex = '''AIza[0-9a-zA-Z_-]{35}'''
+    tags = ['key', 'Google']
+
+[[rules]]
+    id = "google-(gcp)-service-account"
+    description = "Google (GCP) Service Account"
+    regex = '''"type": "service_account"'''
+    regexIsNonSecret = true
+    tags = ['key', 'Google']
+
+[[rules]]
+    id = "google-sevice-oauth"
+    description = "Google Sevice OAuth"
+    regex = '''[0-9]+-[0-9a-zA-Z_]{32}\.apps\.googleusercontent\.com'''
+    tags = ['key', 'Google']
+
+[[rules]]
+    id = "google-oauth-access-token"
+    description = "Google OAuth Access Token"
+    regex = '''ya29\.[0-9a-zA-Z_-]+'''
+    tags = ['key', 'Google']
+
+[[rules]]
+    id = "heroku-api-key"
+    description = "Heroku API key"
+    regex = '''(?i)heroku(.{0,20})?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})'''
+    secretGroup = 2
+    tags = ['key', 'Heroku']
+
+[[rules]]
+    id = "mailchimp-api-key"
+    description = "MailChimp API key"
+    regex = '''(?i)(mailchimp|mc)(.{0,20})?([0-9a-f]{32}-us[0-9]{1,2})'''
+    secretGroup = 3
+    tags = ['key', 'Mailchimp']
+
+[[rules]]
+    id = "mailgun-api-key"
+    description = "Mailgun API key"
+    regex = '''((?i)(mailgun|mg)(.{0,20})?)?(key-[0-9a-z]{32})'''
+    secretGroup = 3
+    tags = ['key', 'Mailgun']
+
+[[rules]]
+    id = "paypal-braintree-access-token"
+    description = "PayPal Braintree access token"
+    regex = '''access_token\$production\$[0-9a-z]{16}\$[0-9a-f]{32}'''
+    tags = ['key', 'Paypal']
+
+[[rules]]
+    id = "picatic-api-key"
+    description = "Picatic API key"
+    regex = '''sk_live_[0-9a-z]{32}'''
+    tags = ['key', 'Picatic']
+
+[[rules]]
+    id = "sendgrid-api-key"
+    description = "SendGrid API Key"
+    regex = '''SG\.[\w_]{16,32}\.[\w_]{16,64}'''
+    tags = ['key', 'SendGrid']
+
+[[rules]]
+    id = "slack-webhook"
+    description = "Slack Webhook"
+    regex = '''https://hooks.slack.com/services/T[0-9a-zA-Z_]{8,12}/B[0-9a-zA-Z_]{8,12}/[0-9a-zA-Z_]{24}'''
+    tags = ['key', 'slack']
+
+[[rules]]
+    id = "stripe-api-key"
+    description = "Stripe API key"
+    regex = '''(?i)stripe(.{0,20})?([sr]k_live_[0-9a-zA-Z]{24})'''
+    secretGroup = 2
+    tags = ['key', 'Stripe']
+
+[[rules]]
+    id = "square-access-token"
+    description = "Square access token"
+    regex = '''sq0atp-[0-9a-zA-Z_-]{22}'''
+    tags = ['key', 'square']
+
+[[rules]]
+    id = "square-oauth-secret"
+    description = "Square OAuth secret"
+    regex = '''sq0csp-[0-9a-zA-Z_-]{43}'''
+    tags = ['key', 'square']
+
+[[rules]]
+    id = "twilio-api-key"
+    description = "Twilio API key"
+    regex = '''(?i)twilio(.{0,20})?(SK[0-9a-f]{32})'''
+    secretGroup = 2
+    tags = ['key', 'twilio']
+
+[[rules]]
+    id = "dynatrace-token"
+    description = "Dynatrace token"
+    regex = '''dt0[a-zA-Z]{1}[0-9]{2}\.[A-Z0-9]{24}\.[A-Z0-9]{64}'''
+    tags = ['key', 'Dynatrace']
+
+[[rules]]
+    id = "shopify-shared-secret"
+    description = "Shopify shared secret"
+    regex = '''shpss_[0-9a-fA-F]{32}'''
+    tags = ['key', 'Shopify']
+
+[[rules]]
+    id = "shopify-access-token"
+    description = "Shopify access token"
+    regex = '''shpat_[0-9a-fA-F]{32}'''
+    tags = ['key', 'Shopify']
+
+[[rules]]
+    id = "shopify-custom-app-access-token"
+    description = "Shopify custom app access token"
+    regex = '''shpca_[0-9a-fA-F]{32}'''
+    tags = ['key', 'Shopify']
+
+[[rules]]
+    id = "shopify-private-app-access-token"
+    description = "Shopify private app access token"
+    regex = '''shppa_[0-9a-fA-F]{32}'''
+    tags = ['key', 'Shopify']
+
+[[rules]]
+    id = "pypi-upload-token"
+    description = "PyPI upload token"
+    regex = '''pypi-AgEIcHlwaS5vcmc[0-9a-zA-Z_-]{50,1000}'''
+    tags = ['key', 'pypi']
+
+[[rules]]
+    id = "password-in-url"
+    description = "Password in URL"
+    regex = '''[a-zA-Z]{3,10}://([^/\s:@$]{3,20}:[^/\s:@$]{3,20})@.{1,100}\b'''
+    secretGroup = 1
+    tags = ['key', 'URL']
+    priority = 8
+
+[[rules]]
+    id = "password-in-url"
+    description = "Password in URL"
+    regex = '''(?i)[a-zA-Z]{3,10}://([^/\s:@$]{3,255})(/.{0,1000})?\?.{0,1000}password([^&=\s]{0,20})=([^&"'\s][^&\s]{3,60})\b'''
+    secretGroup = 4
+    tags = ['key', 'URL']
+    priority = 9
+
+[[rules]]
+    id = "generic-api-key"
+    description = "Generic API key"
+    regex = '''(?i)(?:api_key|apikey)(.{0,20})?["']([0-9a-zA-Z]{32,45})["']'''
+    secretGroup = 2
+    tags = ['key', 'API', 'generic']
+    priority = 10
+
+[[rules]]
+    id = "generic-api-key"
+    description = "Generic API key"
+    regex = '''(?i)(api_key|apikey)=([0-9a-zA-Z]{32,45})'''
+    secretGroup = 2
+    tags = ['key', 'API', 'generic']
+    priority = 10
+
+[[rules]]
+    id = "generic-secret"
+    description = "Generic Secret"
+    regex = '''(?i)secret([\\\w]{0,20})?["']?[^\S\n\r]*[=:][^\S\n\r]*\\?["']([0-9a-zA-Z*!@$%#^&\(\){}\[\]:;<>,\.?/~_+-=|\\]{32,80}?)\\?["']'''
+    secretGroup = 2
+    tags = ['key', 'Secret', 'generic']
+    priority = 10
+
+[[rules]]
+    id = "generic-password"
+    description = "Generic Password"
+    regex = '''(?i)password(.{0,20})?["']([0-9a-zA-Z]{32,80})["']'''
+    secretGroup = 2
+    tags = ['key', 'Password', 'generic']
+    priority = 10
+
+[[rules]]
+    id = "generic-high-entropy-password"
+    description = "High Entropy Password"
+    regex = '''(?i)password([^'\",:\n\r=`]{0,20})?["']?[^\S\n\r]*[=:][^\S\n\r]*["']([0-9a-zA-Z*!@$%#^&\(\){}\[\]:;<>,\.?/~_+-=|\\]{12,80})["']'''
+    secretGroup = 2
+    tags = ['key', 'Password', 'generic']
+    priority = 10
+    entropy = 3.5
+    [rules.allowlist]
+        description = "Allow when password is already caught by the generic password"
+        regexes = ['''(?i)password(.{0,20})?["'][0-9a-zA-Z]{32,80}["']''',]
+
+[[rules]]
+    id = "generic-token"
+    description = "Generic Token"
+    regex = '''(?i)token([^'" ,:\n\r=(]{0,20})?[^\S\n\r]*[=:][^\S\n\r]*["']([0-9a-zA-Z*!@$%#^&\(\){}\[\]:;<>,\.?/~_+-=|\\]{12,80})["']'''
+    secretGroup = 2
+    tags = ['Token', 'generic']
+    priority = 10
+    entropy = 3.2
+
+[[rules]]
+    id = "generic-token"
+    description = "Generic Token"
+    regex = '''(?i)token([^'",:\n\r=(]{0,20})?["'][^\S\n\r]*[=:][^\S\n\r]*["']([0-9a-zA-Z*!@$%#^&\(\){}\[\]:;<>,\.?/~_+-=|\\]{12,80})["']'''
+    secretGroup = 2
+    tags = ['Token', 'generic']
+    priority = 10
+    entropy = 3.2
+
+[[rules]]
+    id = "files-with-keys-and-credentials"
+    description = "Files with keys and credentials"
+    path = '''(?i)(id_rsa|passwd|id_rsa.pub|pgpass|pem|key|shadow|.*\.keytab)$'''
+    regexIsNonSecret = true
+
+[[rules]]
+    id = "oauth-client-id"
+    description = "OAuth Client ID"
+    regex = '''(?i)oauth/.*[\?&]client_id=([0-9a-zA-Z]+)([&]|[^\S\n\r])?'''
+    secretGroup = 1
+    tags = ['general', 'oauth']
+
+[[rules]]
+    id = "authorization-bearer"
+    description = "Authorization Bearer"
+    regex = '''(?i)authorization:([^\S\n\r])+bearer([^\S\n\r])+([0-9a-zA-Z._-]{6,})[^\S\n\r]?'''
+    secretGroup = 3
+    tags = ['general', 'bearer']
+    entropy = 4
+    [rules.allowlist]
+        description = "allow in comments"
+        regexes = ['''\s*\*.+''',]
+
+[[rules]]
+    id = "generic-authorization-bearer"
+    description = "Authorization Bearer"
+    regex = '''(?i)["']Bearer ([0-9a-zA-Z._-]+)["']'''
+    secretGroup = 1
+    tags = ['general', 'bearer']
+    priority = 10
+
+[[rules]]
+    id = "generic-jwt"
+    description = "Generic JWT"
+    regex = '''\b(ey(I|J)[0-9a-zA-Z_-]{16,}\.(e30|ey(I|J)[0-9a-zA-Z_-]{7,})(\.[0-9a-zA-Z_-]*)?)\b'''
+    secretGroup = 1
+    tags = ['general', 'JWT']
+    priority = 11
+
+[[rules]]
+    id = "social-security-number"
+    description = "Social Security Number"
+    regex = '''[^-]\b(\d{3}-\d{2}-\d{4})\b[^-]'''
+    secretGroup = 1
+    tags = ['PII', 'SSN']
+    [rules.allowlist]
+        description = "Allow invalid SSNs"
+        regexes = ['''\b((666|000|9\d{2})-\d{2}-\d{4})\b''','''\b(\d{3}-(0{2})-\d{4})\b''','''\b(\d{3}-\d{2}-(0{4}))\b''','''\b(123-45-6789)\b''','''\b(012-34-5678)\b''','''\b(721-07-4426)\b''',]
+
+[[rules]]
+    id = "credit-card-number"
+    description = "Credit Card Number"
+    regex = '''[^-]\b((4\d{3}|5[1-5]\d{2}|2\d{3}|3[47]\d{1,2})\-\d{4,6}\-\d{4,6}?(\-\d{3,4})?(\d{3})?)\b[^-]'''
+    secretGroup = 1
+    tags = ['PII', 'CreditCard']
+    [rules.allowlist]
+        description = "Allow Test Credit cards numbers"
+        regexes = ['''\b(.*1234-5678.*)\b''','''\b(.*0000-0000.*)\b''','''\b(.*1111-1111.*)\b''','''.*4000-6200-0000-0007.*''','''.*4000-0600-0000-0006.*''',]
+
+[[rules]]
+    id = "ibm-cloud-iam"
+    description = "IBM Cloud IAM key"
+    regex = '''(?i)ibm(?-i)[^'" ,:\n\r=(]{0,30}[^\S\n\r]*[=:][^\S\n\r]*(?:["']?)([0-9a-zA-Z_-]{44})(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['IBM', 'key']
+
+[[rules]]
+    id = "ibm-cos-hmac"
+    description = "IBM Cloud Object Storage HMAC"
+    regex = '''(?:ibm[^'" ,:\n\r=(]{0,20})[^\S\n\r]*[=:][^\S\n\r]*(?:["']?)([0-9a-f]{48})(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['IBM', 'key']
+
+[[rules]]
+    id = "jfrog-artifactory-password"
+    description = "Jfrog Artifactory Password"
+    regex = '''\bAKCp[0-9][0-9a-zA-Z]{10,70}\b'''
+    tags = ['Artifactory', 'Password']
+
+[[rules]]
+    id = "jfrog-artifactory-api-token"
+    description = "Jfrog Artifactory API Token"
+    regex = '''(?i)(?:(?:api_key|apikey)[^'" ,:\n\r=(]{0,20})(?-i)[^\S\n\r]*[=:][^\S\n\r]*(?:["']?)(AP[0-9A-F][0-9a-zA-Z]{8,45})(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['Artifactory', 'key']
+
+[[rules]]
+    id = "azure-storage-key"
+    description = "Azure Storage Key"
+    regex = '''AccountKey=([0-9a-zA-Z+/=\\]{88})\b'''
+    secretGroup = 1
+    tags = ['Azure', 'key']
+
+[[rules]]
+    id = "npmrc-auth-token"
+    description = "Npmrc Auth Token"
+    regex = '''_authToken=([0-9a-zA-Z-]{36,100})\b'''
+    secretGroup = 1
+    tags = ['npmrc', 'token']
+    path = '''(?i)npmrc'''
+
+[[rules]]
+    id = "npm-access-token"
+    description = "Npm Access Token"
+    regex = '''\b(npm_[0-9a-zA-Z]{36})\b'''
+    secretGroup = 1
+    tags = ['npm', 'token']
+
+[[rules]]
+    id = "beamer-api-key"
+    description = "Beamer API Key"
+    regex = '''\b(b_[0-9a-zA-Z+/]{43}=)([^0-9a-zA-Z+/=]|$)'''
+    secretGroup = 1
+    tags = ['beamer', 'key']
+
+[[rules]]
+    id = "clickup-api-key"
+    description = "ClickUp API Key"
+    regex = '''\b(pk_[0-9]{8}_[A-Z0-9]{32})\b'''
+    secretGroup = 1
+    tags = ['clickup', 'api']
+
+[[rules]]
+    id = "telegram-bot-token"
+    description = "Telegram Bot Token"
+    regex = '''\b([0-9]{8,12}:AA[0-9a-zA-Z_-]{33})\b'''
+    secretGroup = 1
+    tags = ['telegram', 'key']
+
+[[rules]]
+    id = "rapidapi-api-key"
+    description = "RapidAPI API Key"
+    regex = '''(?i)rapidapi(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z_-]{50}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['rapid', 'key']
+
+[[rules]]
+    id = "travis-ci-token"
+    description = "TravisCI Token"
+    regex = '''(?i)travis(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z_]{22}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['travisci', 'token']
+
+[[rules]]
+    id = "sonar-api-token"
+    description = "Sonar API Token"
+    regex = '''(?i)sonar(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([a-z0-9]{40}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['sonar', 'api']
+
+[[rules]]
+    id = "discord-webhook"
+    description = "Discord WebHook"
+    regex = '''https://discordapp\.com/api/webhooks/([0-9]{18}/[0-9a-zA-Z_-]{68})\b'''
+    secretGroup = 1
+    tags = ['discord', 'webhook']
+
+[[rules]]
+    id = "spotify-key"
+    description = "Spotify Key"
+    regex = '''(?i)spotify(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z]{32}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['spotify', 'key']
+
+[[rules]]
+    id = "snyk-key"
+    description = "Snyk Key"
+    regex = '''(?i)snyk(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['snyk', 'key']
+
+[[rules]]
+    id = "notion-integration-token"
+    description = "Notion Integration Token"
+    regex = '''(?i)notion(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)(secret_[0-9a-zA-Z]{43}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['notion', 'token']
+
+[[rules]]
+    id = "airtable-api-key"
+    description = "Airtable API Key"
+    regex = '''\b(key[0-9a-zA-Z]{14})\b'''
+    secretGroup = 1
+    tags = ['airtable', 'key']
+
+[[rules]]
+    id = "airtable-api-token"
+    description = "Airtable API Token"
+    regex = '''(?i)airtable(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)((app[0-9a-zA-Z]{14})?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['airtable', 'token']
+
+[[rules]]
+    id = "gitlab-token"
+    description = "Gitlab Token"
+    regex = '''(?i)gitlab(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z\-=_]{20,22}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['gitlab', 'token']
+    entropy = 3.5
+
+[[rules]]
+    id = "gitlab-v2-personal-access-token"
+    description = "Gitlab V2 Personal Access Token"
+    regex = '''\b(glpat-[0-9a-zA-Z\-=_]{20,22})\b'''
+    secretGroup = 1
+    tags = ['gitlab', 'token']
+
+[[rules]]
+    id = "algolia-api-key"
+    description = "Algolia API Key"
+    regex = '''(?i)algolia(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z]{32}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['algolia', 'key']
+
+[[rules]]
+    id = "algolia-app-id"
+    description = "Algolia App ID"
+    regex = '''(?i)algolia(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([A-Z0-9]{10}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['algolia', 'id']
+
+[[rules]]
+    id = "alibaba-cloud-access-key-secret"
+    description = "Alibaba Cloud Access Key Secret"
+    regex = '''(?i)alibaba(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z]{30}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['alibaba', 'key']
+
+[[rules]]
+    id = "alibaba-cloud-access-key-id"
+    description = "Alibaba Cloud Access Key ID"
+    regex = '''\b(LTAI[0-9a-zA-Z]{17,21})\b'''
+    secretGroup = 1
+    tags = ['alibaba', 'id']
+
+[[rules]]
+    id = "cloudflare-ca-key"
+    description = "Cloudflare CA Key"
+    regex = '''(?i)cloudflare(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)(v1.0-[0-9a-zA-Z-]{169,400})\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['cloudflare', 'key']
+
+[[rules]]
+    id = "cloudflare-email-auth-key"
+    description = "Cloudflare Email Auth Key"
+    regex = '''(?i)cloudflare(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([a-z0-9]{37}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['cloudflare', 'key']
+
+[[rules]]
+    id = "cloudflare-api-token"
+    description = "Cloudflare Api Token"
+    regex = '''(?i)cloudflare(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z-_]{40}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['cloudflare', 'key']
+
+[[rules]]
+    id = "microsoft-teams-webhook"
+    description = "Microsoft Teams Webhook"
+    regex = '''\b(https://[0-9a-zA-Z]{2,30}\.webhook\.office(?:365)?\.com/webhook(?:b2)?/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}@[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/[0-9a-zA-Z]{1,40}/[0-9a-zA-Z]{32}/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})\b'''
+    secretGroup = 1
+    tags = ['microsoft', 'teams', 'webhook']
+
+[[rules]]
+    id = "digitalocean-personal-access-token"
+    description = "DigitalOcean Personal Access Token"
+    regex = '''\bdop_v1_[0-9a-fA-F]{64}\b'''
+    tags = ['digitalocean', 'token']
+
+[[rules]]
+    id = "digitalocean-oauth-token"
+    description = "DigitalOcean OAuth Token"
+    regex = '''\bdoo_v1_[0-9a-fA-F]{64}\b'''
+    tags = ['digitalocean', 'token']
+
+[[rules]]
+    id = "digitalocean-oauth-refresh-token"
+    description = "DigitalOcean OAuth refresh Token"
+    regex = '''\bdor_v1_[0-9a-fA-F]{64}\b'''
+    tags = ['digitalocean', 'token']
+
+[[rules]]
+    id = "digitalocean-token"
+    description = "DigitalOcean Token"
+    regex = '''(?i)digital.?ocean(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-f]{64}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['digitalocean', 'token']
+
+[[rules]]
+    id = "digitalocean-spaces-key"
+    description = "DigitalOcean Spaces Key"
+    regex = '''(?i)digital.?ocean(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z+/]{43}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['digitalocean', 'spaces', 'key']
+
+[[rules]]
+    id = "okta-token"
+    description = "Okta Token"
+    regex = '''(?i)okta(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)(00[0-9a-zA-Z-_]{40}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['okta', 'token']
+    priority = 8
+
+[[rules]]
+    id = "okta-token"
+    description = "Okta Token"
+    regex = '''\bSSWS (00[0-9a-zA-Z-_]{40})\b'''
+    secretGroup = 1
+    tags = ['okta', 'token']
+    priority = 8
+
+[[rules]]
+    id = "okta-key"
+    description = "Okta Key"
+    regex = '''(?i)okta(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z-_]{36,90}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['okta', 'token']
+    priority = 9
+
+[[rules]]
+    id = "okta-key"
+    description = "Okta Key"
+    regex = '''(?i)(?:key|secret)(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z-_]{36,90}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['okta', 'token']
+    path = '''okta.env'''
+    priority = 7
+
+[[rules]]
+    id = "auth0-client-id"
+    description = "Auth0 Client ID"
+    regex = '''(?i)auth0(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z_-]{32,60}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['auth0', 'id']
+
+[[rules]]
+    id = "auth0-client-secret"
+    description = "Auth0 Client Secret"
+    regex = '''(?i)auth0(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z_-]{64,300}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['auth0', 'secret']
+
+[[rules]]
+    id = "line-key"
+    description = "Line Key"
+    regex = '''(?i)line(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z+/]{171,172}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['line', 'key']
+
+[[rules]]
+    id = "line-notify-token"
+    description = "Line Notify Token"
+    regex = '''(?i)line(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z]{43}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['line', 'token']
+
+[[rules]]
+    id = "confluent-id"
+    description = "Confluent ID"
+    regex = '''(?i)confluent(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z]{16}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['confluent', 'id']
+
+[[rules]]
+    id = "confluent-token"
+    description = "Confluent Token"
+    regex = '''(?i)confluent(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z\+\/]{64}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['confluent', 'token']
+
+[[rules]]
+    id = "trello-api-token"
+    description = "Trello Api Token"
+    regex = '''(?i)trello(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z]{64}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['trello', 'token']
+
+[[rules]]
+    id = "jira-access-token"
+    description = "Jira Access Token"
+    regex = '''(?i)jira(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-zA-Z]{24}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['jira', 'token']
+
+[[rules]]
+    id = "sentry-access-token"
+    description = "Sentry Access Token"
+    regex = '''(?i)sentry(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-f]{64}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['sentry', 'token']
+    priority = 10
+
+[[rules]]
+    id = "sentry-access-token"
+    description = "Sentry Access Token"
+    regex = '''(?i)token(?-i)[^'" ,:\n\r=(]{0,20}(?:["']?)[^\S\n\r]*[=:][^\S\n\r]*\\?(?:["']?)([0-9a-f]{64}?)\\?(?:["']?)\b'''
+    secretGroup = 1
+    tags = ['sentry', 'token']
+    path = '''sentryclirc'''
+    priority = 9
+
+[[rules]]
+    id = "legit-api-token"
+    description = "Legit Api Token"
+    regex = '''\blgt_[0-9a-f]{48}\b'''
+    tags = ['legit', 'token']
+
+[allowlist]
+    description = "Allowlisted files"
+    files = ['''^\.?gitleaks.toml$''','''(.*?)(png|jpg|gif|doc|docx|pdf|bin|xls|pyc|zip)$''','''(go.mod|go.sum)$''','''^\.legitignore$''',]
+    paths = ['''node_modules/.*$''','''lib/npm3/.*$''','''.*/third_party/.*$''','''CakePlate/cake/tests/.*$''','''vendor/.*$''','''vendors/.*$''',]
+
